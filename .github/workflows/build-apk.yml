@@ -36,6 +36,21 @@ jobs:
             npx cap add android
           fi
 
+      - name: Fix Kotlin duplicate classes
+        run: |
+          if ! grep -q "kotlin-stdlib-jdk7:1.8.22" android/app/build.gradle; then
+            cat >> android/app/build.gradle <<'EOF'
+
+          configurations.all {
+              resolutionStrategy {
+                  force "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+                  force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22"
+                  force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
+              }
+          }
+          EOF
+          fi
+
       - name: Sync web assets
         run: npx cap sync android
 
